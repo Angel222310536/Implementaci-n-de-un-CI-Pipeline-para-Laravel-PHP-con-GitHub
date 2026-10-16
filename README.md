@@ -1,66 +1,28 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CI Pipeline para Laravel - PHP con GitHub Actions
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Objetivo
+Implementar un pipeline de integración continua que ejecute automáticamente la instalación de dependencias, las verificaciones del código y las pruebas automatizadas de una aplicación Laravel cada vez que se envíen cambios a un repositorio de GitHub[cite: 1].
 
-## About Laravel
+## Tecnologías Utilizadas
+- PHP 8.2[cite: 5]
+- Laravel 11[cite: 3]
+- Composer[cite: 3]
+- PHPUnit[cite: 3]
+- Git y GitHub / GitHub Actions[cite: 3]
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Estructura del Pipeline (`.github/workflows/ci.yml`)
+El flujo automatizado se activa ante eventos de `push` o `pull_request` sobre la rama principal (`main`) y realiza los siguientes pasos[cite: 5, 6]:
+1. **Checkout:** Clona el código fuente en el servidor de ejecución (*runner*) de GitHub Actions[cite: 6].
+2. **Setup PHP:** Configura PHP 8.2 junto con las extensiones requeridas (`mbstring`, `pdo_sqlite`, `sqlite3`, `bcmath`, `fileinfo`)[cite: 5, 6].
+3. **Validación de Composer:** Ejecuta `composer validate` para verificar la consistencia de las dependencias[cite: 3, 5, 6].
+4. **Instalación:** Ejecuta `composer install` para descargar las librerías del proyecto de forma limpia[cite: 3, 5, 6].
+5. **Preparación del Entorno:** Copia `.env.example` a `.env`, genera la llave de cifrado de la aplicación (`artisan key:generate`) y limpia la caché[cite: 5, 6].
+6. **Pruebas Automatizadas:** Ejecuta la suite de pruebas mediante SQLite en memoria (`php artisan test`)[cite: 4, 5, 6].
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Evidencias de Ejecución del Pipeline
+- **Ejecución Exitosa Inicial (Prueba A):** El pipeline se ejecuta correctamente, instalando dependencias y aprobando todas las pruebas automatizadas (`HomePageTest`).
+- **Ejecución Fallida Controlada (Prueba B):** Se modificó temporalmente la aserción de la prueba a un estado no esperado (`assertStatus(404)`), provocando que GitHub Actions detectara el fallo y reportara el error en los registros (*logs*)[cite: 9].
+- **Corrección y Recuperación:** Se restauró la aserción correcta (`assertSuccessful`), enviando un nuevo commit que permitió al pipeline volver a aprobarse exitosamente[cite: 9].
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Conclusiones
+La implementación de integración continua permite automatizar la validación del código ante cualquier cambio, reduciendo errores humanos, asegurando la reproducibilidad del entorno de pruebas y garantizando la estabilidad de la aplicación Laravel antes de integrarla al flujo de desarrollo principal[cite: 1, 12].
